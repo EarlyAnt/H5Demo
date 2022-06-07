@@ -84,15 +84,13 @@
             }
         })
         console.log(resultAfter);
-
-        lblResult = document.getElementById("lblResult");
         if (resultAfter.data.label_type == 100 || resultAfter.data.label_type == 200 || resultAfter.data.label_type == 300) {
-            lblResult.innerText = "空气签: type[" + resultAfter.data.label_type + "] no[" + resultAfter.data.no + "]";
+            console.log("空气签: type[" + resultAfter.data.label_type + "] no[" + resultAfter.data.no + "]");
         } else {
-            lblResult.innerText = "上上签: type[" + resultAfter.data.label_type + "] no[" + resultAfter.data.no + "]";
+            console.log("上上签: type[" + resultAfter.data.label_type + "] no[" + resultAfter.data.no + "]");
         }
     }
     $.showLabel = showLabel;
 
-    window.onload = init();
+    window.onload = init();    
 }();

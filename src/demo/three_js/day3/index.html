@@ -3,8 +3,8 @@
 <html lang="en">
 
 <head>
-    <script src="http://www.yanhuangxueyuan.com/versions/threejsR92/build/three.js"></script>
-    <script src="./OrbitControls.js"></script>
+    <script src="../../../js/libs/three.js-r139/build/three.js"></script>
+    <script src="../../../js/libs/three.js-r139/examples/js/controls/OrbitControls.js"></script>
 
     <meta charset="UTF-8">
     <title>Day3：操作相机</title>
@@ -54,14 +54,13 @@
 
         // 渲染方式二：使用requestAnimationFrame方法
         function render() {
-            //渲染场景
             mesh.rotateY(0.05);
             renderer.render(scene, camera);
-            // requestAnimationFrame(render);
+            requestAnimationFrame(render);
         }
         render();
         var controls = new THREE.OrbitControls(camera, renderer.domElement);//创建控件对象
-        controls.addEventListener('change', render);//监听鼠标、键盘事件
+        // controls.addEventListener('change', render);//监听鼠标、键盘事件
 
     </script>
 </body>

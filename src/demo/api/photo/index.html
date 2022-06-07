@@ -1,0 +1,40 @@
+<html>
+
+<head>
+    <title>h5拍照</title>
+
+    <script src="../../../js/libs/vconsole.min.js"></script>
+
+    <script type="text/javascript">
+        var vConsole = new VConsole();
+    </script>
+</head>
+
+<body>
+    <center>
+        <div class="loading">
+            <label id="lblResult">显示结果</label><br />
+
+            <!-- 显示原生弹窗，选择拍照或相册 -->
+            <input id="inputFile" type="file" accept="image/*" style="display: none;" />
+
+            <!-- accept限定图片类型 -->
+            <!-- <input id="inputFile" type="file" accept="image/jpg,image/png" style="display: none;" /> -->
+
+            <!-- 加上capture=camera就直接打开相机，而不再显示原生弹窗 -->
+            <!-- <input id="inputFile" type="file" accept="image/*" capture="camera" style="display: none;" />-->
+
+            <!-- 调取视频 -->
+            <!-- <input type="file" accept="video/*;capture=camcorder"> -->
+
+            <!-- 调取音频 -->
+            <!-- <input type="file" accept="audio/*;capture=microphone"> -->
+            <br /><br />
+            <button id="btnTakePhoto" class="button">拍照</button>
+        </div>
+    </center>
+</body>
+
+<script src="js/main.js"></script>
+
+</html>

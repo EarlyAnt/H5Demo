@@ -14,6 +14,11 @@
 		Character and animation from <a href="https://www.mixamo.com/" target="_blank" rel="noopener">Mixamo</a>
 	</div>
 
+	<div id="menu" style="position: absolute; bottom: 10px; right: 10px;">
+		<button id="btnPrev">Prev</button>
+		<button id="btnNext">Next</button>
+	</div>
+
 	<!-- Import maps polyfill -->
 	<!-- Remove this when import maps will be widely supported -->
 	<script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
@@ -38,10 +43,13 @@
 
 		let camera, scene, renderer, stats;
 		let model1, model2;
+		let position1, position2;
+		let tween, controls;
 		const clock = new THREE.Clock();
 		const mixers = [];
 
 		init();
+		initButton();
 		animate();
 
 		function init() {
@@ -51,6 +59,7 @@
 
 			camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 2000);
 			camera.position.set(0, 200, 400);
+			position1 = { x: 0, y: 200, z: 400 };
 
 			scene = new THREE.Scene();
 			scene.background = new THREE.Color(0xa0a0a0);
@@ -97,6 +106,7 @@
 				model2 = SkeletonUtils.clone(object);
 				model1.position.z = -600;
 				model2.position.z = 0;
+				position2 = { x: model1.position.x, y: 200, z: model1.position.z + 300 };
 
 				const mixer1 = new THREE.AnimationMixer(model1);
 				const mixer2 = new THREE.AnimationMixer(model2);
@@ -106,29 +116,6 @@
 
 				scene.add(model1, model2);
 				mixers.push(mixer1, mixer2);
-
-				let tween = new TWEEN.Tween({
-					x: camera.position.x,
-					y: camera.position.y,
-					z: camera.position.z
-				});
-
-				tween.to({
-					x: model2.position.x,
-					y: 200,
-					z: model2.position.z - 300
-				}, 1000);
-
-				tween.onUpdate(targetPos => {
-					camera.position.x = targetPos.x;
-					camera.position.y = targetPos.y;
-					camera.position.z = targetPos.z;
-				});
-				tween.easing(TWEEN.Easing.Sinusoidal.InOut);
-				tween.start();
-				tween.onComplete(function () {
-					console.log('tween--finish')
-				});
 			});
 
 			renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -137,7 +124,7 @@
 			renderer.shadowMap.enabled = true;
 			container.appendChild(renderer.domElement);
 
-			const controls = new OrbitControls(camera, renderer.domElement);
+			controls = new OrbitControls(camera, renderer.domElement);
 			controls.target.set(0, 100, 0);
 			controls.update();
 
@@ -146,6 +133,51 @@
 			// stats
 			stats = new Stats();
 			container.appendChild(stats.dom);
+		}
+
+		function initButton() {
+			var btnPrev = document.getElementById("btnPrev");
+			btnPrev.addEventListener("click", function () {
+				console.log("btnPrev clicked");
+				changeView(position1);
+				controls.target.set(model2.position.x, 100, model2.position.z);
+			});
+
+			var btnNext = document.getElementById("btnNext");
+			btnNext.addEventListener("click", function () {
+				console.log("btnNext clicked");
+				changeView(position2);
+
+				controls.target.set(model1.position.x, 100, model1.position.z);
+			});
+		}
+
+		function changeView(newPos) {
+			console.log("changeView->newPos: (" + newPos.x + ", " + newPos.y + ", " + newPos.z + ")");
+
+			var cameraPos = camera.position;
+			tween = new TWEEN.Tween({
+				x: cameraPos.x,
+				y: cameraPos.y,
+				z: cameraPos.z
+			});
+
+			tween.to({
+				x: newPos.x,
+				y: newPos.y,
+				z: newPos.z
+			}, 1000);
+
+			tween.onUpdate(lerpPos => {
+				camera.position.x = lerpPos.x;
+				camera.position.y = lerpPos.y;
+				camera.position.z = lerpPos.z;
+			});
+			tween.easing(TWEEN.Easing.Sinusoidal.InOut);
+			tween.start();
+			tween.onComplete(function () {
+				console.log('changeView->tween finish')
+			});
 		}
 
 		function onWindowResize() {

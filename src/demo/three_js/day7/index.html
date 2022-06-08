@@ -17,15 +17,16 @@
 	<!-- Import maps polyfill -->
 	<!-- Remove this when import maps will be widely supported -->
 	<script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
-	<!-- <script src="./xinuo/nuo_MAX_ani.FBX"></script> -->
-	<script type="importmap">
-			{
-				"imports": {
-					"three": "../../../js/libs/three.js-r139/build/three.module.js"
-				}
-			}
-		</script>
 
+	<script type="importmap">
+		{
+			"imports": {
+				"three": "../../../js/libs/three.js-r139/build/three.module.js"
+			}
+		}
+	</script>
+
+	<script src="../../../js/libs/tween.js-18.6.3/dist/tween.umd.js"></script>
 	<script type="module">
 
 		import * as THREE from 'three';
@@ -36,9 +37,8 @@
 		import * as SkeletonUtils from '../../../js/libs/three.js-r139/examples/jsm/utils/SkeletonUtils.js';
 
 		let camera, scene, renderer, stats;
-
+		let model1, model2;
 		const clock = new THREE.Clock();
-
 		const mixers = [];
 
 		init();
@@ -50,7 +50,7 @@
 			document.body.appendChild(container);
 
 			camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 2000);
-			camera.position.set(100, 200, 400);			
+			camera.position.set(0, 200, 400);
 
 			scene = new THREE.Scene();
 			scene.background = new THREE.Color(0xa0a0a0);
@@ -93,10 +93,10 @@
 					}
 				});
 
-				const model1 = SkeletonUtils.clone(object);
-				const model2 = SkeletonUtils.clone(object);
-				model1.position.z = -500;
-				model2.position.x = 0;
+				model1 = SkeletonUtils.clone(object);
+				model2 = SkeletonUtils.clone(object);
+				model1.position.z = -600;
+				model2.position.z = 0;
 
 				const mixer1 = new THREE.AnimationMixer(model1);
 				const mixer2 = new THREE.AnimationMixer(model2);
@@ -106,6 +106,29 @@
 
 				scene.add(model1, model2);
 				mixers.push(mixer1, mixer2);
+
+				let tween = new TWEEN.Tween({
+					x: camera.position.x,
+					y: camera.position.y,
+					z: camera.position.z
+				});
+
+				tween.to({
+					x: model2.position.x,
+					y: 200,
+					z: model2.position.z - 300
+				}, 1000);
+
+				tween.onUpdate(targetPos => {
+					camera.position.x = targetPos.x;
+					camera.position.y = targetPos.y;
+					camera.position.z = targetPos.z;
+				});
+				tween.easing(TWEEN.Easing.Sinusoidal.InOut);
+				tween.start();
+				tween.onComplete(function () {
+					console.log('tween--finish')
+				});
 			});
 
 			renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -138,6 +161,7 @@
 			for (const mixer of mixers) mixer.update(delta);
 			renderer.render(scene, camera);
 			stats.update();
+			TWEEN.update();
 		}
 	</script>
 
